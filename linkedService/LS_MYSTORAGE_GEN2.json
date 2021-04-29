@@ -1,0 +1,18 @@
+{
+	"name": "LS_MYSTORAGE_GEN2",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://stacclschmidtgen2.dfs.core.windows.net/",
+			"accountKey": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "LS_MY_KEYVAULT",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "lsstorage-gen2-acountkey"
+			}
+		}
+	}
+}
