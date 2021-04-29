@@ -1,0 +1,19 @@
+{
+	"name": "SourceDataset_skm",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_STORAGE_GEN2",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "test.dat",
+				"folderPath": "dataset",
+				"fileSystem": "transient"
+			}
+		}
+	}
+}
