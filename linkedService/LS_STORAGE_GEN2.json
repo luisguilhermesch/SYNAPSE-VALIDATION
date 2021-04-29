@@ -4,7 +4,7 @@
 		"annotations": [],
 		"type": "AzureBlobFS",
 		"typeProperties": {
-			"url": "https://stacclschmidtgen2.dfs.core.windows.net/",
+			"url": "https://stacclschmidtgen2.dfs.core.windows.net/a",
 			"accountKey": {
 				"type": "AzureKeyVaultSecret",
 				"store": {
