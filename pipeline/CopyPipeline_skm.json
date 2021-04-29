@@ -4,6 +4,7 @@
 		"activities": [
 			{
 				"name": "Copy_skm",
+				"description": "asasaa",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
