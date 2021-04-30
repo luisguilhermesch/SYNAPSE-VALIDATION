@@ -1,5 +1,5 @@
 {
-	"name": "LS_MYSTORAGE_GEN2_NEW",
+	"name": "LS_MYSTORAGE_GEN2",
 	"properties": {
 		"annotations": [],
 		"type": "AzureBlobFS",
