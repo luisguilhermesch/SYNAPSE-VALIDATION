@@ -1,0 +1,10 @@
+{
+	"name": "LS_GEN2_SOURCE_MSI",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "https://stacclschmidtgen2.dfs.core.windows.net"
+		}
+	}
+}
