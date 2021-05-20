@@ -1,0 +1,17 @@
+{
+	"name": "test_acl",
+	"properties": {
+		"content": {
+			"query": "\nCREATE EXTERNAL DATA SOURCE [abfss_ds_acl_test] \n\tWITH (\n\t\tLOCATION   = 'abfss://fssynwrls999@stgsynwrkls999.dfs.core.windows.net', \n\t\tTYPE       = HADOOP--, \n\t)\nGO\n\n\nCREATE EXTERNAL TABLE test_external_data_acl_COLOMBIA\n(\nRequestID\t[varchar](255)\t\t,\nSPRAS\t[varchar](255)\t\t,\nCOKEY\t[varchar](255)\t\t,\nLTEXT\t[varchar](255)\t\t\n)\nWITH (LOCATION='COL/DS_UC_COKEY_TEXT.CSV',\n    DATA_SOURCE = [abfss_ds_acl_test],  \n    FILE_FORMAT = FF_TEXTFORMAT_DEMO,\n    REJECT_TYPE = VALUE,\n    REJECT_VALUE = 0\n)\n\n\nSELECT TOP 100 * FROM test_external_data_acl\nGO\n\n\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"poolName": "lstestpool",
+				"databaseName": "lstestpool"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

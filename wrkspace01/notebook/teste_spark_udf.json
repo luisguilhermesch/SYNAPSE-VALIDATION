@@ -1,0 +1,266 @@
+{
+	"name": "teste_spark_udf",
+	"properties": {
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "sparkls001",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"synapse_widget": {
+				"version": "0.1"
+			},
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "Synapse PySpark"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/4908a595-1b99-4b83-b8f1-8d434261f37f/resourceGroups/POC-SETUP/providers/Microsoft.Synapse/workspaces/synapseluisschmidt001/bigDataPools/sparkls001",
+				"name": "sparkls001",
+				"type": "Spark",
+				"endpoint": "https://synapseluisschmidt001.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/sparkls001",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "2.4",
+				"nodeCount": 4,
+				"cores": 4,
+				"memory": 28,
+				"extraHeader": null
+			}
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": true
+				},
+				"source": [
+					"# importing libraries\r\n",
+					"import json\r\n",
+					"import time\r\n",
+					"from pyspark.sql.types import *\r\n",
+					"from pyspark.sql.functions import *\r\n",
+					"from pyspark.sql import SparkSession\r\n",
+					"from notebookutils import mssparkutils\r\n",
+					"import ast"
+				],
+				"attachments": null,
+				"execution_count": 5
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": true
+				},
+				"source": [
+					"params = \"{\\\"input_container_name\\\":\\\"default\\\",\\\"input_file_path\\\":\\\"default\\\",\\\"input_file_type\\\":\\\"json\\\"}\""
+				],
+				"attachments": null,
+				"execution_count": 6
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": true
+				},
+				"source": [
+					"if isinstance(params, str):\r\n",
+					"    params = ast.literal_eval(params)"
+				],
+				"attachments": null,
+				"execution_count": 7
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": true
+				},
+				"source": [
+					"# Azure Key vault access info\r\n",
+					"kv_name = 'aziekv1dhf001'\r\n",
+					"kv_ls_name = 'LS_aziekv1dhf001'\r\n",
+					"\r\n",
+					"\r\n",
+					"# Azure storage access info\r\n",
+					"blob_account_name = 'aziest1dhf001'\r\n",
+					"blob_container_name = params.get('input_container_name')\r\n",
+					"blob_relative_path = params.get('input_file_path')\r\n",
+					"linked_service_name = 'LS_aziest1dhf001' \r\n",
+					"\r\n",
+					"# getting sas token to access storage account\r\n",
+					"blob_sas_token = mssparkutils.credentials.getConnectionStringOrCreds(linked_service_name)\r\n",
+					"\r\n",
+					"wasb_path = 'wasbs://%s@%s.blob.core.windows.net/%s' % (blob_container_name, blob_account_name, blob_relative_path)\r\n",
+					"spark.conf.set('fs.azure.sas.%s.%s.blob.core.windows.net' % (blob_container_name, blob_account_name), blob_sas_token)\r\n",
+					"\r\n",
+					"# getting the last file in the current path\r\n",
+					"wasb_path = mssparkutils.fs.ls(wasb_path)[-1]\r\n",
+					"wasb_path = wasb_path.path\r\n",
+					"print('File to convert into dataframe: ', wasb_path)\r\n",
+					""
+				],
+				"attachments": null,
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": true
+				},
+				"source": [
+					"# Transforming JSON into data frame object\r\n",
+					"df = spark.read.json(wasb_path)\r\n",
+					"\r\n",
+					"# exploding entities array to transform into multiple rows with user information\r\n",
+					"explodeDF = df.select(explode(\"entities\").alias(\"e\"))\r\n",
+					"\r\n",
+					"# TODO: the field primaryContactInfo.address should be decrypted, we must find a way to decrypted and then put it back inside the primaryContactInfo column\r\n",
+					"\r\n",
+					"# Flattening dataframe\r\n",
+					"flattenDF = explodeDF.selectExpr(\"e.acdAutoAnswer\", \"e.addresses\", \"e.chat\", \"e.department\", \"e.division\"\r\n",
+					"                                , \"e.email\", \"e.id\", \"e.images\", \"e.manager\", \"e.name\", \"e.primaryContactInfo\"\r\n",
+					"                                , \"e.selfUri\", \"e.state\", \"e.title\", \"e.username\", \"e.version\")\r\n",
+					"\r\n",
+					"\r\n",
+					"\r\n",
+					"# selecting final fields with the JSON keys\r\n",
+					"finalDF = flattenDF.select(\"acdAutoAnswer\", to_json(\"addresses\").alias('addresses'), to_json(\"chat\").alias('chat'), \"department\", to_json(\"division\").alias('division')\r\n",
+					"                                , \"email\", \"id\", to_json(\"images\").alias('images'),to_json(\"manager\").alias('manager'),\"name\",to_json(\"primaryContactInfo\").alias('primaryContactInfo')\r\n",
+					"                                , \"selfUri\", \"state\", \"title\", \"username\", \"version\")\r\n",
+					"\r\n",
+					"\r\n",
+					""
+				],
+				"attachments": null,
+				"execution_count": 9
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": true
+				},
+				"source": [
+					"# using our custom UDF package\r\n",
+					"query = \"CREATE TEMPORARY FUNCTION FernetDecrypt as 'com.sodexo.datahub.hive.udf.FernetDecryptUDF'\"\r\n",
+					"spark.sql(query)"
+				],
+				"attachments": null,
+				"execution_count": 10
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": true
+				},
+				"source": [
+					"# Database connection properties\r\n",
+					"server_name = \"jdbc:sqlserver://aziedb1wsp237.sql.azuresynapse.net:1433\"\r\n",
+					"database_name = \"aziedb1dpk763\"\r\n",
+					"url = server_name + \";\" + \"databaseName=\" + database_name + \";\"\r\n",
+					"table_name = \"purecloud.users_incremental_load\"\r\n",
+					"username = \"sqladminuser\"\r\n",
+					"password = mssparkutils.credentials.getSecret(kv_name,'DOF-SYNAPSE-PWD',kv_ls_name) \r\n",
+					"\r\n",
+					"\r\n",
+					"# CAUTION: If the table exists all data will be truncated\r\n",
+					"try:\r\n",
+					"  df.write \\\r\n",
+					"    .format(\"jdbc\") \\\r\n",
+					"    .mode(\"overwrite\") \\\r\n",
+					"    .option(\"url\", url) \\\r\n",
+					"    .option(\"dbtable\", table_name) \\\r\n",
+					"    .option(\"user\", username) \\\r\n",
+					"    .option(\"password\", password) \\\r\n",
+					"    .option(\"createTableColumnTypes\", \"acdAutoAnswer tinyint ,addresses VARCHAR(8000), chat VARCHAR(8000), department VARCHAR(8000), division VARCHAR(8000),email VARCHAR(255), id VARCHAR(255), images VARCHAR(8000), manager VARCHAR(8000),name VARCHAR(255), primaryContactInfo VARCHAR(8000), selfUri VARCHAR(255),state VARCHAR(255)\t,title VARCHAR(255), username VARCHAR(255), version BIGINT\")\\\r\n",
+					"    .save()\r\n",
+					"except ValueError as error :\r\n",
+					"    print(\"Connector write failed\", error)"
+				],
+				"attachments": null,
+				"execution_count": null
+			}
+		]
+	}
+}

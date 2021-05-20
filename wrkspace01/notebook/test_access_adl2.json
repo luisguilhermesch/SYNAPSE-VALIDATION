@@ -1,0 +1,259 @@
+{
+	"name": "test_access_adl2",
+	"properties": {
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "mysparkpool001",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"synapse_widget": {
+				"version": "0.1",
+				"state": {
+					"ca3cdf14-7dec-404f-a34e-b7bfe710c85b": {
+						"type": "Synapse.DataFrame",
+						"sync_state": {
+							"table": {
+								"rows": [
+									{
+										"_c0": "RequestID",
+										"_c1": "SPRAS",
+										"_c2": "COKEY",
+										"_c3": "LTEXT"
+									},
+									{
+										"_c0": "REQU_00001224_20210205143556",
+										"_c1": "P",
+										"_c2": "2100",
+										"_c3": "TERMOELÉTRICA#REV.DISTRIBUIDOR"
+									},
+									{
+										"_c0": "REQU_00001224_20210205143556",
+										"_c1": "P",
+										"_c2": "2110",
+										"_c3": "TERMOELÉTRICA-CONS.PROP/ FINAL"
+									},
+									{
+										"_c0": "REQU_00001224_20210205143556",
+										"_c1": "P",
+										"_c2": "400810",
+										"_c3": "FATURAMENTO"
+									},
+									{
+										"_c0": "REQU_00001224_20210205143556",
+										"_c1": "P",
+										"_c2": "4100",
+										"_c3": "RESIDENCIAL"
+									},
+									{
+										"_c0": "REQU_00001224_20210205143556",
+										"_c1": "P",
+										"_c2": "4110",
+										"_c3": "RESIDENCIAL COLETIVO"
+									},
+									{
+										"_c0": "REQU_00001224_20210205143556",
+										"_c1": "P",
+										"_c2": "4400",
+										"_c3": "PQ. COMERCIO"
+									},
+									{
+										"_c0": "REQU_00001224_20210205143556",
+										"_c1": "P",
+										"_c2": "4411",
+										"_c3": "PQ. COMERCIO- FEDERAL"
+									},
+									{
+										"_c0": "REQU_00001224_20210205143556",
+										"_c1": "P",
+										"_c2": "4412",
+										"_c3": "PQ. COMERCIO- ESTADUAL"
+									},
+									{
+										"_c0": "REQU_00001224_20210205143556",
+										"_c1": "P",
+										"_c2": "4413",
+										"_c3": "PQ. COMERCIO- MUNICIPAL"
+									}
+								],
+								"schema": {
+									"_c0": "string",
+									"_c1": "string",
+									"_c2": "string",
+									"_c3": "string"
+								}
+							},
+							"isSummary": false,
+							"language": "scala"
+						},
+						"persist_state": {
+							"view": {
+								"type": "details",
+								"chartOptions": {
+									"chartType": "bar",
+									"aggregationType": "count",
+									"categoryFieldKeys": [
+										"_c0"
+									],
+									"seriesFieldKeys": [
+										"_c0"
+									],
+									"isStacked": false
+								}
+							}
+						}
+					}
+				}
+			},
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "Synapse PySpark"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/4908a595-1b99-4b83-b8f1-8d434261f37f/resourceGroups/POC-SETUP/providers/Microsoft.Synapse/workspaces/synapseluisschmidt001/bigDataPools/mysparkpool001",
+				"name": "mysparkpool001",
+				"type": "Spark",
+				"endpoint": "https://synapseluisschmidt001.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/mysparkpool001",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "2.4",
+				"nodeCount": 3,
+				"cores": 4,
+				"memory": 28,
+				"extraHeader": null
+			}
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"\r\n",
+					"##https://stgluisschmidt001.blob.core.windows.net/datalab/col/dataset/DS_UC_COKEY_TEXT.CSV\r\n",
+					"#abfss://fssynwrls999@stgsynwrkls999.dfs.core.windows.net/COL/DS_UC_COKEY_TEXT.CSV\r\n",
+					"\r\n",
+					"df = spark.read.load('abfss://datalab@stgluisschmidt001.dfs.core.windows.net/col/dataset/DS_UC_COKEY_TEXT.CSV', format='csv', header=True)\r\n",
+					"#df = spark.read.load('abfss://fssynwrls999@stgsynwrkls999.dfs.core.windows.net/COL/DS_UC_COKEY_TEXT.CSV', format='csv', header=True)\r\n",
+					"\r\n",
+					"#display(df.limit(10))\r\n",
+					"#df.printSchema\r\n",
+					"df.show(10)\r\n",
+					"\r\n",
+					"# Save file to Spark Pool\r\n",
+					"df.write.mode(\"overwrite\").saveAsTable(\"default.external_sample_data\")"
+				],
+				"attachments": null,
+				"execution_count": 10
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": true
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"df = spark.read.load('abfss://datalab@stgluisschmidt001.dfs.core.windows.net/col/dataset/DS_UC_COKEY_TEXT.CSV', format='csv'\r\n",
+					"## If header exists uncomment line below\r\n",
+					"##, header=True\r\n",
+					")\r\n",
+					"display(df.limit(10))"
+				],
+				"attachments": null,
+				"execution_count": 14
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": false
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"df = spark.read.load('abfss://fssynwrls999@stgsynwrkls999.dfs.core.windows.net/COL/DS_UC_COKEY_TEXT.CSV', format='csv'\r\n",
+					"## If header exists uncomment line below\r\n",
+					"##, header=True\r\n",
+					")\r\n",
+					"display(df.limit(10))"
+				],
+				"attachments": null,
+				"execution_count": 12
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": true
+				},
+				"source": [
+					"-- This is auto-generated code\r\n",
+					"SELECT\r\n",
+					"    TOP 100 *\r\n",
+					"FROM\r\n",
+					"    OPENROWSET(\r\n",
+					"        BULK 'https://stgluisschmidt001.dfs.core.windows.net/datalab/col/dataset/DS_UC_COKEY_TEXT.CSV',\r\n",
+					"        FORMAT = 'CSV',\r\n",
+					"        PARSER_VERSION='2.0'\r\n",
+					"    ) AS [result]\r\n",
+					""
+				],
+				"attachments": null,
+				"execution_count": 15
+			}
+		]
+	}
+}

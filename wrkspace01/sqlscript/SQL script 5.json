@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 5",
+	"properties": {
+		"content": {
+			"query": "-- This is auto-generated code\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'https://stgluisschmidt001.dfs.core.windows.net/root/DS_UC_COKEY_TEXT.CSV',\n        FORMAT = 'CSV',\n        PARSER_VERSION='2.0'\n    ) AS [result]\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"poolName": "Built-in",
+				"databaseName": "master"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
