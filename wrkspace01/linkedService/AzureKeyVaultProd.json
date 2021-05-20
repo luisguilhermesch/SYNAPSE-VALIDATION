@@ -1,0 +1,10 @@
+{
+	"name": "AzureKeyVaultProd",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://kvlschmidt001.vault.azure.net/"
+		}
+	}
+}
