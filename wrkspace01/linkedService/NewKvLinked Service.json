@@ -1,0 +1,10 @@
+{
+	"name": "NewKvLinked Service",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://mykeyvaultsynapse001.vault.azure.net/"
+		}
+	}
+}
