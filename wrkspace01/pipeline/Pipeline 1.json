@@ -30,7 +30,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "DelimitedText3",
+						"referenceName": "DelimitedText1",
 						"type": "DatasetReference"
 					}
 				]
