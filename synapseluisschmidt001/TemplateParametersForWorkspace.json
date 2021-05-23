@@ -1,0 +1,45 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"value": "synapseluisschmidt001"
+		},
+		"lk_test_service_principal_auth_servicePrincipalCredential": {
+			"value": ""
+		},
+		"synapseluisschmidt001-WorkspaceDefaultSqlServer_connectionString": {
+			"value": ""
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://stgluisschmidt001.dfs.core.windows.net"
+		},
+		"AzureDataLakeStorageDEV_properties_typeProperties_url": {
+			"value": "https://stgluisschmidt001.dfs.core.windows.net"
+		},
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"value": "https://kvlschmidt001.vault.azure.net/"
+		},
+		"AzureKeyVaultProd_properties_typeProperties_baseUrl": {
+			"value": "https://kvlschmidt001.vault.azure.net/"
+		},
+		"NewKvLinked Service_properties_typeProperties_baseUrl": {
+			"value": "https://mykeyvaultsynapse001.vault.azure.net/"
+		},
+		"lk_test_service_principal_auth_properties_typeProperties_url": {
+			"value": "https://stgluisschmidt001.dfs.core.windows.net"
+		},
+		"lk_test_service_principal_auth_properties_typeProperties_tenant": {
+			"value": "7f60a3b8-4fe4-4171-9ca8-52303d0adbc0"
+		},
+		"lk_test_service_principal_auth_properties_typeProperties_servicePrincipalId": {
+			"value": "2372859d-875f-42cf-81f5-ecd506ed2985"
+		},
+		"lk_with_service_principal_credentials_properties_typeProperties_url": {
+			"value": "https://stgluisschmidt001.dfs.core.windows.net"
+		},
+		"synapseluisschmidt001-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"value": "https://stgsynwrkls999.dfs.core.windows.net"
+		}
+	}
+}

@@ -1,0 +1,1036 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"type": "string",
+			"metadata": "Workspace name",
+			"defaultValue": "synapseluisschmidt001"
+		},
+		"lk_test_service_principal_auth_servicePrincipalCredential": {
+			"type": "secureString",
+			"metadata": "Secure string for 'servicePrincipalCredential' of 'lk_test_service_principal_auth'"
+		},
+		"synapseluisschmidt001-WorkspaceDefaultSqlServer_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'synapseluisschmidt001-WorkspaceDefaultSqlServer'"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stgluisschmidt001.dfs.core.windows.net"
+		},
+		"AzureDataLakeStorageDEV_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stgluisschmidt001.dfs.core.windows.net"
+		},
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://kvlschmidt001.vault.azure.net/"
+		},
+		"AzureKeyVaultProd_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://kvlschmidt001.vault.azure.net/"
+		},
+		"NewKvLinked Service_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://mykeyvaultsynapse001.vault.azure.net/"
+		},
+		"lk_test_service_principal_auth_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stgluisschmidt001.dfs.core.windows.net"
+		},
+		"lk_test_service_principal_auth_properties_typeProperties_tenant": {
+			"type": "string",
+			"defaultValue": "7f60a3b8-4fe4-4171-9ca8-52303d0adbc0"
+		},
+		"lk_test_service_principal_auth_properties_typeProperties_servicePrincipalId": {
+			"type": "string",
+			"defaultValue": "2372859d-875f-42cf-81f5-ecd506ed2985"
+		},
+		"lk_with_service_principal_credentials_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stgluisschmidt001.dfs.core.windows.net"
+		},
+		"synapseluisschmidt001-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://stgsynwrkls999.dfs.core.windows.net"
+		}
+	},
+	"variables": {
+		"workspaceId": "[concat('Microsoft.Synapse/workspaces/', parameters('workspaceName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('workspaceName'), '/AzureDataLakeStorage1')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]",
+					"accountKey": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "AzureKeyVault1",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "Secret02"
+					}
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]",
+				"[concat(variables('workspaceId'), '/linkedServices/AzureKeyVault1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/AzureDataLakeStorageDEV')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('AzureDataLakeStorageDEV_properties_typeProperties_url')]",
+					"credential": {
+						"referenceName": "CredentialPrd",
+						"type": "CredentialReference"
+					}
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]",
+				"[concat(variables('workspaceId'), '/credentials/CredentialPrd')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/AzureKeyVault1')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('AzureKeyVault1_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/AzureKeyVaultProd')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('AzureKeyVaultProd_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/NewKvLinked Service')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('NewKvLinked Service_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/lk_test_service_principal_auth')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('lk_test_service_principal_auth_properties_typeProperties_url')]",
+					"tenant": "[parameters('lk_test_service_principal_auth_properties_typeProperties_tenant')]",
+					"servicePrincipalId": "[parameters('lk_test_service_principal_auth_properties_typeProperties_servicePrincipalId')]",
+					"servicePrincipalCredentialType": "ServicePrincipalKey",
+					"servicePrincipalCredential": {
+						"type": "SecureString",
+						"value": "[parameters('lk_test_service_principal_auth_servicePrincipalCredential')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/lk_with_service_principal_credentials')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('lk_with_service_principal_credentials_properties_typeProperties_url')]",
+					"credential": {
+						"referenceName": "Credential_new",
+						"type": "CredentialReference"
+					}
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]",
+				"[concat(variables('workspaceId'), '/credentials/Credential_new')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/synapseluisschmidt001-WorkspaceDefaultSqlServer')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"parameters": {
+					"DBName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('synapseluisschmidt001-WorkspaceDefaultSqlServer_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/synapseluisschmidt001-WorkspaceDefaultStorage')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('synapseluisschmidt001-WorkspaceDefaultStorage_properties_typeProperties_url')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/AutoResolveIntegrationRuntime')]",
+			"type": "Microsoft.Synapse/workspaces/integrationRuntimes",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "AutoResolve",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 8,
+							"timeToLive": 0
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/CredentialPrd')]",
+			"type": "Microsoft.Synapse/workspaces/credentials",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "ServicePrincipal",
+				"typeProperties": {
+					"tenant": "7f60a3b8-4fe4-4171-9ca8-52303d0adbc0",
+					"servicePrincipalId": "00a1e536-8065-4a83-a4c1-2abc4a468277",
+					"servicePrincipalKey": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "AzureKeyVault1",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "Secret02"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/AzureKeyVault1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Credential_new')]",
+			"type": "Microsoft.Synapse/workspaces/credentials",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "ServicePrincipal",
+				"typeProperties": {
+					"tenant": "7f60a3b8-4fe4-4171-9ca8-52303d0adbc0",
+					"servicePrincipalId": "2372859d-875f-42cf-81f5-ecd506ed2985",
+					"servicePrincipalKey": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "AzureKeyVault1",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "Secret03"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/AzureKeyVault1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/WorkspaceSystemIdentity')]",
+			"type": "Microsoft.Synapse/workspaces/credentials",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "ManagedIdentity",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 1')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "IF NOT EXISTS (SELECT * FROM sys.external_file_formats WHERE name = 'SynapseParquetFormat') \n\tCREATE EXTERNAL FILE FORMAT [SynapseParquetFormat] \n\tWITH ( FORMAT_TYPE = PARQUET)\nGO\n\n\tCREATE EXTERNAL DATA SOURCE [fssynwrls999_stgsynwrkls999_dfs_core_windows_net] \n\tWITH (\n\t\tLOCATION = 'abfss://fssynwrls999@stgsynwrkls999.dfs.core.windows.net', \n\t\tTYPE     = HADOOP \n\t)\nGO\n\nDROP  EXTERNAL DATA   SOURCE [abfss_ds_acl_test] \nCREATE EXTERNAL DATA SOURCE [abfss_ds_acl_test] \n\tWITH (\n\t\tLOCATION   = 'abfss://fssynwrls999@stgsynwrkls999.dfs.core.windows.net', \n\t\tTYPE       = HADOOP--, \n\t)\nGO\n\n\n\nhttps://stgsynwrkls999.blob.core.windows.net/fssynwrls999/COL/DS_UC_COKEY_TEXT.CSV\n\n\nCREATE EXTERNAL TABLE test_external_data_acl\n(\nRequestID\t[varchar](255)\t\t,\nSPRAS\t[varchar](255)\t\t,\nCOKEY\t[varchar](255)\t\t,\nLTEXT\t[varchar](255)\t\t\n)\nWITH (LOCATION='COL/DS_UC_COKEY_TEXT.CSV',\n    DATA_SOURCE = [abfss_ds_acl_test],  \n    FILE_FORMAT = FF_TEXTFORMAT_DEMO,\n    REJECT_TYPE = VALUE,\n    REJECT_VALUE = 0\n)\n\n\n\n\nCREATE EXTERNAL TABLE TB_ACL_TEST01 (\n\t[timeperiod] varchar(8000),\n\t[flow1] int,\n\t[occupancy1] float,\n\t[speed1] float,\n\t[flow2] int,\n\t[occupancy2] float,\n\t[speed2] float,\n\t[flow3] int,\n\t[occupancy3] float,\n\t[speed3] float,\n\t[flow4] int,\n\t[occupancy4] float,\n\t[speed4] float,\n\t[flow5] int,\n\t[occupancy5] float,\n\t[speed5] float,\n\t[flow6] int,\n\t[occupancy6] float,\n\t[speed6] float,\n\t[flow7] int,\n\t[occupancy7] float,\n\t[speed7] float,\n\t[flow8] int,\n\t[occupancy8] float,\n\t[speed8] float\n\t)\n\tWITH (\n\tLOCATION = 'part-r-00000-ddaee723-f3f6-4f25-a34b-3312172aa6d7.snappy.parquet',\n\tDATA_SOURCE = [fssynwrls999_stgsynwrkls999_dfs_core_windows_net],\n\tFILE_FORMAT = [SynapseParquetFormat],\n\tREJECT_TYPE = VALUE,\n\tREJECT_VALUE = 0\n\t)\nGO\n\nSELECT TOP 100 * FROM TB_ACL_TEST01\nGO\n\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"poolName": "lstestpool",
+						"databaseName": "lstestpool"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 2')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- This is auto-generated code\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'https://stgluisschmidt001.dfs.core.windows.net/datalab/col/dataset/DS_UC_COKEY_TEXT.CSV',\n        FORMAT = 'CSV',\n        PARSER_VERSION='2.0'\n    ) AS [result]\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"poolName": "Built-in",
+						"databaseName": "master"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 3')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- This is auto-generated code\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'https://stgsynwrkls999.dfs.core.windows.net/fssynwrls999/COL/DS_UC_COKEY_TEXT.CSV',\n        FORMAT = 'CSV',\n        PARSER_VERSION='2.0'\n    ) AS [result]\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"poolName": "Built-in",
+						"databaseName": "master"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 4')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- This is auto-generated code\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'https://stgluisschmidt001.dfs.core.windows.net/root/DS_UC_COKEY_TEXT.CSV',\n        FORMAT = 'CSV',\n        PARSER_VERSION='2.0'\n    ) AS [result]\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"poolName": "Built-in",
+						"databaseName": "master"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 5')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- This is auto-generated code\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'https://stgluisschmidt001.dfs.core.windows.net/root/DS_UC_COKEY_TEXT.CSV',\n        FORMAT = 'CSV',\n        PARSER_VERSION='2.0'\n    ) AS [result]\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"poolName": "Built-in",
+						"databaseName": "master"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/test_acl')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "\nCREATE EXTERNAL DATA SOURCE [abfss_ds_acl_test] \n\tWITH (\n\t\tLOCATION   = 'abfss://fssynwrls999@stgsynwrkls999.dfs.core.windows.net', \n\t\tTYPE       = HADOOP--, \n\t)\nGO\n\n\nCREATE EXTERNAL TABLE test_external_data_acl_COLOMBIA\n(\nRequestID\t[varchar](255)\t\t,\nSPRAS\t[varchar](255)\t\t,\nCOKEY\t[varchar](255)\t\t,\nLTEXT\t[varchar](255)\t\t\n)\nWITH (LOCATION='COL/DS_UC_COKEY_TEXT.CSV',\n    DATA_SOURCE = [abfss_ds_acl_test],  \n    FILE_FORMAT = FF_TEXTFORMAT_DEMO,\n    REJECT_TYPE = VALUE,\n    REJECT_VALUE = 0\n)\n\n\nSELECT TOP 100 * FROM test_external_data_acl\nGO\n\n\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"poolName": "lstestpool",
+						"databaseName": "lstestpool"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Notebook 1')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"synapse_widget": {
+						"version": "0.1"
+					},
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "python"
+					},
+					"language_info": {
+						"name": "python"
+					}
+				},
+				"cells": [
+					{
+						"cell_type": "code",
+						"source": [
+							"%%pyspark\r\n",
+							"df = spark.read.load('abfss://fssynwrls999@stgsynwrkls999.dfs.core.windows.net/COL/DS_UC_COKEY_TEXT.CSV', format='csv'\r\n",
+							"## If header exists uncomment line below\r\n",
+							"##, header=True\r\n",
+							")\r\n",
+							"display(df.limit(10))"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": null
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/test_access_adl2')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "mysparkpool001",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"synapse_widget": {
+						"version": "0.1",
+						"state": {
+							"ca3cdf14-7dec-404f-a34e-b7bfe710c85b": {
+								"type": "Synapse.DataFrame",
+								"sync_state": {
+									"table": {
+										"rows": [
+											{
+												"_c0": "RequestID",
+												"_c1": "SPRAS",
+												"_c2": "COKEY",
+												"_c3": "LTEXT"
+											},
+											{
+												"_c0": "REQU_00001224_20210205143556",
+												"_c1": "P",
+												"_c2": "2100",
+												"_c3": "TERMOELÉTRICA#REV.DISTRIBUIDOR"
+											},
+											{
+												"_c0": "REQU_00001224_20210205143556",
+												"_c1": "P",
+												"_c2": "2110",
+												"_c3": "TERMOELÉTRICA-CONS.PROP/ FINAL"
+											},
+											{
+												"_c0": "REQU_00001224_20210205143556",
+												"_c1": "P",
+												"_c2": "400810",
+												"_c3": "FATURAMENTO"
+											},
+											{
+												"_c0": "REQU_00001224_20210205143556",
+												"_c1": "P",
+												"_c2": "4100",
+												"_c3": "RESIDENCIAL"
+											},
+											{
+												"_c0": "REQU_00001224_20210205143556",
+												"_c1": "P",
+												"_c2": "4110",
+												"_c3": "RESIDENCIAL COLETIVO"
+											},
+											{
+												"_c0": "REQU_00001224_20210205143556",
+												"_c1": "P",
+												"_c2": "4400",
+												"_c3": "PQ. COMERCIO"
+											},
+											{
+												"_c0": "REQU_00001224_20210205143556",
+												"_c1": "P",
+												"_c2": "4411",
+												"_c3": "PQ. COMERCIO- FEDERAL"
+											},
+											{
+												"_c0": "REQU_00001224_20210205143556",
+												"_c1": "P",
+												"_c2": "4412",
+												"_c3": "PQ. COMERCIO- ESTADUAL"
+											},
+											{
+												"_c0": "REQU_00001224_20210205143556",
+												"_c1": "P",
+												"_c2": "4413",
+												"_c3": "PQ. COMERCIO- MUNICIPAL"
+											}
+										],
+										"schema": {
+											"_c0": "string",
+											"_c1": "string",
+											"_c2": "string",
+											"_c3": "string"
+										}
+									},
+									"isSummary": false,
+									"language": "scala"
+								},
+								"persist_state": {
+									"view": {
+										"type": "details",
+										"chartOptions": {
+											"chartType": "bar",
+											"aggregationType": "count",
+											"categoryFieldKeys": [
+												"_c0"
+											],
+											"seriesFieldKeys": [
+												"_c0"
+											],
+											"isStacked": false
+										}
+									}
+								}
+							}
+						}
+					},
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/4908a595-1b99-4b83-b8f1-8d434261f37f/resourceGroups/POC-SETUP/providers/Microsoft.Synapse/workspaces/synapseluisschmidt001/bigDataPools/mysparkpool001",
+						"name": "mysparkpool001",
+						"type": "Spark",
+						"endpoint": "https://synapseluisschmidt001.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/mysparkpool001",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						},
+						"sparkVersion": "2.4",
+						"nodeCount": 3,
+						"cores": 4,
+						"memory": 28,
+						"extraHeader": null
+					}
+				},
+				"cells": [
+					{
+						"cell_type": "code",
+						"metadata": {
+							"microsoft": {
+								"language": "python"
+							}
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"\r\n",
+							"##https://stgluisschmidt001.blob.core.windows.net/datalab/col/dataset/DS_UC_COKEY_TEXT.CSV\r\n",
+							"#abfss://fssynwrls999@stgsynwrkls999.dfs.core.windows.net/COL/DS_UC_COKEY_TEXT.CSV\r\n",
+							"\r\n",
+							"df = spark.read.load('abfss://datalab@stgluisschmidt001.dfs.core.windows.net/col/dataset/DS_UC_COKEY_TEXT.CSV', format='csv', header=True)\r\n",
+							"#df = spark.read.load('abfss://fssynwrls999@stgsynwrkls999.dfs.core.windows.net/COL/DS_UC_COKEY_TEXT.CSV', format='csv', header=True)\r\n",
+							"\r\n",
+							"#display(df.limit(10))\r\n",
+							"#df.printSchema\r\n",
+							"df.show(10)\r\n",
+							"\r\n",
+							"# Save file to Spark Pool\r\n",
+							"df.write.mode(\"overwrite\").saveAsTable(\"default.external_sample_data\")"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 10
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "python"
+							},
+							"collapsed": true
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"df = spark.read.load('abfss://datalab@stgluisschmidt001.dfs.core.windows.net/col/dataset/DS_UC_COKEY_TEXT.CSV', format='csv'\r\n",
+							"## If header exists uncomment line below\r\n",
+							"##, header=True\r\n",
+							")\r\n",
+							"display(df.limit(10))"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 14
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "python"
+							},
+							"collapsed": false
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"df = spark.read.load('abfss://fssynwrls999@stgsynwrkls999.dfs.core.windows.net/COL/DS_UC_COKEY_TEXT.CSV', format='csv'\r\n",
+							"## If header exists uncomment line below\r\n",
+							"##, header=True\r\n",
+							")\r\n",
+							"display(df.limit(10))"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 12
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": true
+						},
+						"source": [
+							"-- This is auto-generated code\r\n",
+							"SELECT\r\n",
+							"    TOP 100 *\r\n",
+							"FROM\r\n",
+							"    OPENROWSET(\r\n",
+							"        BULK 'https://stgluisschmidt001.dfs.core.windows.net/datalab/col/dataset/DS_UC_COKEY_TEXT.CSV',\r\n",
+							"        FORMAT = 'CSV',\r\n",
+							"        PARSER_VERSION='2.0'\r\n",
+							"    ) AS [result]\r\n",
+							""
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 15
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/teste_spark_udf')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "sparkls001",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"synapse_widget": {
+						"version": "0.1"
+					},
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/4908a595-1b99-4b83-b8f1-8d434261f37f/resourceGroups/POC-SETUP/providers/Microsoft.Synapse/workspaces/synapseluisschmidt001/bigDataPools/sparkls001",
+						"name": "sparkls001",
+						"type": "Spark",
+						"endpoint": "https://synapseluisschmidt001.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/sparkls001",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						},
+						"sparkVersion": "2.4",
+						"nodeCount": 4,
+						"cores": 4,
+						"memory": 28,
+						"extraHeader": null
+					}
+				},
+				"cells": [
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": true
+						},
+						"source": [
+							"# importing libraries\r\n",
+							"import json\r\n",
+							"import time\r\n",
+							"from pyspark.sql.types import *\r\n",
+							"from pyspark.sql.functions import *\r\n",
+							"from pyspark.sql import SparkSession\r\n",
+							"from notebookutils import mssparkutils\r\n",
+							"import ast"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 5
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": true
+						},
+						"source": [
+							"params = \"{\\\"input_container_name\\\":\\\"default\\\",\\\"input_file_path\\\":\\\"default\\\",\\\"input_file_type\\\":\\\"json\\\"}\""
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 6
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": true
+						},
+						"source": [
+							"if isinstance(params, str):\r\n",
+							"    params = ast.literal_eval(params)"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 7
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": true
+						},
+						"source": [
+							"# Azure Key vault access info\r\n",
+							"kv_name = 'aziekv1dhf001'\r\n",
+							"kv_ls_name = 'LS_aziekv1dhf001'\r\n",
+							"\r\n",
+							"\r\n",
+							"# Azure storage access info\r\n",
+							"blob_account_name = 'aziest1dhf001'\r\n",
+							"blob_container_name = params.get('input_container_name')\r\n",
+							"blob_relative_path = params.get('input_file_path')\r\n",
+							"linked_service_name = 'LS_aziest1dhf001' \r\n",
+							"\r\n",
+							"# getting sas token to access storage account\r\n",
+							"blob_sas_token = mssparkutils.credentials.getConnectionStringOrCreds(linked_service_name)\r\n",
+							"\r\n",
+							"wasb_path = 'wasbs://%s@%s.blob.core.windows.net/%s' % (blob_container_name, blob_account_name, blob_relative_path)\r\n",
+							"spark.conf.set('fs.azure.sas.%s.%s.blob.core.windows.net' % (blob_container_name, blob_account_name), blob_sas_token)\r\n",
+							"\r\n",
+							"# getting the last file in the current path\r\n",
+							"wasb_path = mssparkutils.fs.ls(wasb_path)[-1]\r\n",
+							"wasb_path = wasb_path.path\r\n",
+							"print('File to convert into dataframe: ', wasb_path)\r\n",
+							""
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": true
+						},
+						"source": [
+							"# Transforming JSON into data frame object\r\n",
+							"df = spark.read.json(wasb_path)\r\n",
+							"\r\n",
+							"# exploding entities array to transform into multiple rows with user information\r\n",
+							"explodeDF = df.select(explode(\"entities\").alias(\"e\"))\r\n",
+							"\r\n",
+							"# TODO: the field primaryContactInfo.address should be decrypted, we must find a way to decrypted and then put it back inside the primaryContactInfo column\r\n",
+							"\r\n",
+							"# Flattening dataframe\r\n",
+							"flattenDF = explodeDF.selectExpr(\"e.acdAutoAnswer\", \"e.addresses\", \"e.chat\", \"e.department\", \"e.division\"\r\n",
+							"                                , \"e.email\", \"e.id\", \"e.images\", \"e.manager\", \"e.name\", \"e.primaryContactInfo\"\r\n",
+							"                                , \"e.selfUri\", \"e.state\", \"e.title\", \"e.username\", \"e.version\")\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"# selecting final fields with the JSON keys\r\n",
+							"finalDF = flattenDF.select(\"acdAutoAnswer\", to_json(\"addresses\").alias('addresses'), to_json(\"chat\").alias('chat'), \"department\", to_json(\"division\").alias('division')\r\n",
+							"                                , \"email\", \"id\", to_json(\"images\").alias('images'),to_json(\"manager\").alias('manager'),\"name\",to_json(\"primaryContactInfo\").alias('primaryContactInfo')\r\n",
+							"                                , \"selfUri\", \"state\", \"title\", \"username\", \"version\")\r\n",
+							"\r\n",
+							"\r\n",
+							""
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 9
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": true
+						},
+						"source": [
+							"# using our custom UDF package\r\n",
+							"query = \"CREATE TEMPORARY FUNCTION FernetDecrypt as 'com.sodexo.datahub.hive.udf.FernetDecryptUDF'\"\r\n",
+							"spark.sql(query)"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": 10
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": true
+						},
+						"source": [
+							"# Database connection properties\r\n",
+							"server_name = \"jdbc:sqlserver://aziedb1wsp237.sql.azuresynapse.net:1433\"\r\n",
+							"database_name = \"aziedb1dpk763\"\r\n",
+							"url = server_name + \";\" + \"databaseName=\" + database_name + \";\"\r\n",
+							"table_name = \"purecloud.users_incremental_load\"\r\n",
+							"username = \"sqladminuser\"\r\n",
+							"password = mssparkutils.credentials.getSecret(kv_name,'DOF-SYNAPSE-PWD',kv_ls_name) \r\n",
+							"\r\n",
+							"\r\n",
+							"# CAUTION: If the table exists all data will be truncated\r\n",
+							"try:\r\n",
+							"  df.write \\\r\n",
+							"    .format(\"jdbc\") \\\r\n",
+							"    .mode(\"overwrite\") \\\r\n",
+							"    .option(\"url\", url) \\\r\n",
+							"    .option(\"dbtable\", table_name) \\\r\n",
+							"    .option(\"user\", username) \\\r\n",
+							"    .option(\"password\", password) \\\r\n",
+							"    .option(\"createTableColumnTypes\", \"acdAutoAnswer tinyint ,addresses VARCHAR(8000), chat VARCHAR(8000), department VARCHAR(8000), division VARCHAR(8000),email VARCHAR(255), id VARCHAR(255), images VARCHAR(8000), manager VARCHAR(8000),name VARCHAR(255), primaryContactInfo VARCHAR(8000), selfUri VARCHAR(255),state VARCHAR(255)\t,title VARCHAR(255), username VARCHAR(255), version BIGINT\")\\\r\n",
+							"    .save()\r\n",
+							"except ValueError as error :\r\n",
+							"    print(\"Connector write failed\", error)"
+						],
+						"attachments": null,
+						"outputs": [],
+						"execution_count": null
+					}
+				]
+			},
+			"dependsOn": []
+		}
+	]
+}
