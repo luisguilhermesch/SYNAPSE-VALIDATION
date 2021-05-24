@@ -3,6 +3,10 @@
 	"properties": {
 		"nbformat": 4,
 		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "mysparkpool001",
+			"type": "BigDataPoolReference"
+		},
 		"sessionProperties": {
 			"driverMemory": "28g",
 			"driverCores": 4,
@@ -22,15 +26,36 @@
 			},
 			"kernelspec": {
 				"name": "synapse_pyspark",
-				"display_name": "python"
+				"display_name": "Synapse PySpark"
 			},
 			"language_info": {
 				"name": "python"
-			}
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/4908a595-1b99-4b83-b8f1-8d434261f37f/resourceGroups/POC-SETUP/providers/Microsoft.Synapse/workspaces/synapseluisschmidt001/bigDataPools/mysparkpool001",
+				"name": "mysparkpool001",
+				"type": "Spark",
+				"endpoint": "https://synapseluisschmidt001.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/mysparkpool001",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "2.4",
+				"nodeCount": 3,
+				"cores": 4,
+				"memory": 28,
+				"automaticScaleJobs": false
+			},
+			"sessionKeepAliveTimeout": 30
 		},
 		"cells": [
 			{
 				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
 				"source": [
 					"%%pyspark\r\n",
 					"df = spark.read.load('abfss://fssynwrls999@stgsynwrkls999.dfs.core.windows.net/COL/DS_UC_COKEY_TEXT.CSV', format='csv'\r\n",
@@ -39,8 +64,7 @@
 					")\r\n",
 					"display(df.limit(10))"
 				],
-				"attachments": null,
-				"execution_count": null
+				"execution_count": 1
 			}
 		]
 	}
