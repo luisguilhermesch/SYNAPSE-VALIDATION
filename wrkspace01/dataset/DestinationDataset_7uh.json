@@ -1,0 +1,22 @@
+{
+	"name": "DestinationDataset_7uh",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "lk_with_service_principal_credentials",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "DS_UC_COKEY_TEXT4.CSV",
+				"fileSystem": "root"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
