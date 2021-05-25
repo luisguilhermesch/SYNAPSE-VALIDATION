@@ -1,6 +1,7 @@
 {
 	"name": "AzureDataLakeStorage1_prmt",
 	"properties": {
+		"type": "AzureBlobFS",
 		"parameters": {
 			"prmt_uri": {
 				"type": "string",
@@ -8,7 +9,6 @@
 			}
 		},
 		"annotations": [],
-		"type": "AzureBlobFS",
 		"typeProperties": {
 			"url": "@{linkedService().prmt_uri}",
 			"accountKey": {
