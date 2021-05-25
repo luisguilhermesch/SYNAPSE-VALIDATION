@@ -1,0 +1,28 @@
+{
+	"name": "AzureDataLakeStorage1_prmt",
+	"properties": {
+		"parameters": {
+			"prmt_uri": {
+				"type": "string",
+				"defaultValue": "https://stgluisschmidt001.dfs.core.windows.net"
+			}
+		},
+		"annotations": [],
+		"type": "AzureBlobFS",
+		"typeProperties": {
+			"url": "@{linkedService().prmt_uri}",
+			"accountKey": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "AzureKeyVault1",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "Secret02"
+			}
+		},
+		"connectVia": {
+			"referenceName": "AutoResolveIntegrationRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
