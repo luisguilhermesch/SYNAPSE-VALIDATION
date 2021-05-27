@@ -11,7 +11,7 @@
 					"referenceName": "AzureKeyVault1",
 					"type": "LinkedServiceReference"
 				},
-				"secretName": "Secret02"
+				"secretName": "Secret02-test"
 			}
 		},
 		"connectVia": {
